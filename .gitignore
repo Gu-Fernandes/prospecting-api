@@ -1,0 +1,16 @@
+# venv local
+.venv/
+
+# VSCode stuff (opcional)
+.vscode/
+
+# __pycache__ e arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Envs
+.env
+.env.local
+.env.*.local
