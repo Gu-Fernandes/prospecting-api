@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
@@ -11,20 +11,21 @@ class CustomerBase(BaseModel):
     responsible: str = Field(..., min_length=1, max_length=255)
     email: EmailStr
     phone: str = Field(..., min_length=1, max_length=32)
- 
-    main_product: Optional[str] = None
+
+    # mantidos no cliente (não por produto)
     sku: Optional[str] = None
     supplier: Optional[str] = None
 
 
 class CustomerCreate(CustomerBase):
-     
-    pass
+    # códigos de produto (devem existir em products)
+    products: Optional[List[str]] = None
 
 
 class CustomerInDB(CustomerBase):
     id: UUID
-    created_at: datetime
+    created_at: datetime 
+    products: List[str] = []
 
 
 class CustomerUpdate(BaseModel):
@@ -33,6 +34,7 @@ class CustomerUpdate(BaseModel):
     responsible: Optional[str] = Field(None, min_length=1, max_length=255)
     email: Optional[EmailStr] = None
     phone: Optional[str] = Field(None, min_length=1, max_length=32)
-    main_product: Optional[str] = None
+
     sku: Optional[str] = None
-    supplier: Optional[str] = None
+    supplier: Optional[str] = None 
+    products: Optional[List[str]] = None

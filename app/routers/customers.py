@@ -1,5 +1,4 @@
 from uuid import UUID
-
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.deps import get_current_user
@@ -15,33 +14,26 @@ from app.services.customers_service import (
 router = APIRouter(
     prefix="/customers",
     tags=["customers"],
-    dependencies=[Depends(get_current_user)],  # protege todas as rotas
+    dependencies=[Depends(get_current_user)],
 )
 
-
-@router.post("", status_code=status.HTTP_201_CREATED, response_model=dict)
+@router.post("", status_code=status.HTTP_201_CREATED, response_model=CustomerInDB)
 def create_customer(payload: CustomerCreate):
-    saved = insert_customer(payload)
-    return {"message": f"{payload.company} cadastrado com sucesso!", "data": saved}
-
+    return insert_customer(payload)
 
 @router.get("", response_model=list[CustomerInDB])
 def get_customers():
     return list_customers()
 
-
 @router.get("/{customer_id}", response_model=CustomerInDB)
 def get_customer(customer_id: UUID):
     return get_customer_by_id(customer_id)
 
-
 @router.patch("/{customer_id}", response_model=CustomerInDB)
 def patch_customer(customer_id: UUID, changes: CustomerUpdate):
-    # garante que há algo para atualizar
     if not changes.model_dump(exclude_unset=True, exclude_none=True):
         raise HTTPException(status_code=400, detail="Nenhum campo para atualizar.")
     return update_customer(customer_id, changes)
-
 
 @router.delete("/{customer_id}", response_model=dict)
 def remove_customer(customer_id: UUID):
